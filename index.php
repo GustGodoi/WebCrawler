@@ -29,6 +29,9 @@ libxml_clear_errors();
 $tagsP = $dom->getElementsByTagName('div');
 $arrayP = [];
 
+//Array de parágrafos
+$arrayParagrafos = [];
+
 foreach ($tagsP as $div) {
     $class = $div->getAttribute('class');
     if ($class == 'page_content') {
@@ -44,33 +47,9 @@ foreach ($tagsP as $div) {
             }
         }
 
-        echo '<pre>';
-        print_r($arrayP);
         break;
     }
 }
 
-// $tagsA = $dom->getElementsByTagName('div');
-// $arrayA = [];
-
-// foreach ($tagsA as $div) {
-//     $class = $div->getAttribute('class');
-//     if ($class == 'page_content') {
-//         $divsInternas = $div->getElementsByTagName('div');
-//         foreach ($divsInternas as $divInterna) {
-//             $classeInterna = $divInterna->getAttribute('class');
-//             if ($classeInterna == 'library') {
-//                 $AsInternos = $divInterna->getElementsByTagName('a');
-//                 foreach ($AsInternos as $AsInterno) {
-//                     $arrayA[] = $AsInterno->nodeValue;
-//                 }
-//                 break;
-//             }
-//         }
-
-//         echo '<pre>';
-//         print_r($arrayA);
-//         break;
-//     }
-// }
-    
+echo '<pre>';
+print_r($arrayP);
