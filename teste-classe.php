@@ -3,8 +3,8 @@
 require './util/Rc.php';
 
 $gut = new RcCrawler();
-$paragrafos = $gut->getNoticias();
+$titulos = $gut->getNoticias();
 
-print_r($paragrafos);
+print_r($titulos);
 
 ?>

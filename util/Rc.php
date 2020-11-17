@@ -21,7 +21,7 @@ class RcCrawler {
         $divsInternas = $this->capturarDivsInternasPageContent($tagsDiv);
         $divNoticias = $this->capturarNoticias($divsInternas);
         $paragrafos = $this->getArrayParagrafos($divNoticias);
-        $sadfg = $this->capturarTitulo($arrayTitulos);
+        $titulos = $this->capturarTitulo($paragrafos);
         return $paragrafos;
     }
 
@@ -81,13 +81,15 @@ class RcCrawler {
     private function capturarNoticias($divsInternas) {
 
         $divNoticias = null;
-
+        $arrayP = null;
         foreach ($divsInternas as $divNoticias) {
             $classeInterna = $divNoticias->getAttribute('class');
+           // var_dump($classeInterna);
             if (strlen($divNoticias->nodeValue) > 20) {
-                $arrayP [] = $divNoticias;
+                $arrayP = $divNoticias->getElementsByTagName('div');
             }
         }
+
         return $arrayP;
     }
 
@@ -95,7 +97,14 @@ class RcCrawler {
         
         $arrayP = [];
         foreach ($divNoticias as $divNoticia) {
-            $arrayP [] = $divNoticia->nodeValue;
+            
+            $class = $divNoticia->getAttribute('class');
+            
+          //  if ($class == 'col s12 ') {
+                $titulo = $divNoticia->getElementsByTagName('h4');
+                $arrayP [] = $titulo;
+                print_r($divNoticia->nodeValue);
+         //  }
         }
         return $arrayP;
     }
@@ -104,11 +113,9 @@ class RcCrawler {
         
         $arrayTitulos = [];
         foreach ($arrayP as $divNoticia) {
-            $h4 = $divNoticia->getElementsByTagName('h4');
-            foreach ($h4 as $Titulo) {
-                $arrayTitulos = $Titulo->nodeValue;
-            }
+            $arrayTitulos[] = $arrayP->nodeValue;
         }
+
         return $arrayTitulos;
     }
 }
