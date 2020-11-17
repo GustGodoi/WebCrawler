@@ -1,9 +1,9 @@
 <?php
 
-require './util/GutenbergCrawler.php';
+require './util/Rc.php';
 
-$gut = new GutenbergCrawler();
-$paragrafos = $gut->getParagrafos();
+$gut = new RcCrawler();
+$paragrafos = $gut->getNoticias();
 
 print_r($paragrafos);
 
