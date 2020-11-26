@@ -22,7 +22,27 @@ class RcCrawler {
         $divNoticias = $this->capturarNoticias($divsInternas);
         $paragrafos = $this->getArrayParagrafos($divNoticias);
         $titulos = $this->capturarTitulo($paragrafos);
-        return $paragrafos;
+        return $titulos;
+    }
+
+    public function getTextos() {
+        $this->carregarHtml();
+        $tagsDiv = $this->capturarTagsDivGeral();
+        $divsInternas = $this->capturarDivsInternasPageContent($tagsDiv);
+        $divNoticias = $this->capturarNoticias($divsInternas);
+        $paragrafos = $this->getArrayTextos($divNoticias);
+        $textos = $this->capturarTextos($paragrafos);
+        return $textos;
+    }
+    
+    public function getImagens() {
+        $this->carregarHtml();
+        $tagsDiv = $this->capturarTagsDivGeral();
+        $divsInternas = $this->capturarDivsInternasPageContent($tagsDiv);
+        $divNoticias = $this->capturarNoticias($divsInternas);
+        $paragrafos = $this->getArrayImagens($divNoticias);
+        $img = $this->capturarImagens($paragrafos);
+        return $img;
     }
 
     private function getContextoConexao() {
@@ -64,14 +84,12 @@ class RcCrawler {
 
     Private function capturarDivsInternasPageContent($divsGeral) {
 
-        $divsInternas = null;
+        $divsInternas = [];
 
         foreach ($divsGeral as $div) {
             $class = $div->getAttribute('class');
-
             if ($class == 'col s12 m12 l12') {
-                $divsInternas = $div->getElementsByTagName('a');
-                break;
+                $divsInternas[] = $div->getElementsByTagName('a');
             }
         }
 
@@ -81,15 +99,16 @@ class RcCrawler {
     private function capturarNoticias($divsInternas) {
 
         $divNoticias = null;
-        $arrayP = null;
+        $arrayP = [];
+        
         foreach ($divsInternas as $divNoticias) {
-            $classeInterna = $divNoticias->getAttribute('class');
-           // var_dump($classeInterna);
-            if (strlen($divNoticias->nodeValue) > 20) {
-                $arrayP = $divNoticias->getElementsByTagName('div');
+            foreach ($divNoticias as $div) {
+                $classeInterna = $div->getAttribute('class');
+                if (strlen($div->nodeValue) > 20) {
+                    $arrayP[] = $div->getElementsByTagName('div');
+                }
             }
         }
-
         return $arrayP;
     }
 
@@ -97,14 +116,14 @@ class RcCrawler {
         
         $arrayP = [];
         foreach ($divNoticias as $divNoticia) {
-            
-            $class = $divNoticia->getAttribute('class');
-            
-          //  if ($class == 'col s12 ') {
-                $titulo = $divNoticia->getElementsByTagName('h4');
-                $arrayP [] = $titulo;
-                print_r($divNoticia->nodeValue);
-         //  }
+            foreach ($divNoticia as $divs) {
+                $class = $divs->getAttribute('class');
+
+                if ($class == 'col s12 ') {
+                    $titulo = $divs->getElementsByTagName('h4');
+                    $arrayP [] = $titulo;
+                }
+            }
         }
         return $arrayP;
     }
@@ -113,10 +132,74 @@ class RcCrawler {
         
         $arrayTitulos = [];
         foreach ($arrayP as $divNoticia) {
-            $arrayTitulos[] = $arrayP->nodeValue;
+            foreach ($divNoticia as $titulo) {
+                
+                $arrayTitulos[] = $titulo->nodeValue;
+            }
         }
-
         return $arrayTitulos;
+    }
+
+///////////////////////////////////////////////////////////////////////////
+
+    private function getArrayTextos($divNoticias) {
+        
+        $arrayTextos = [];
+        foreach ($divNoticias as $divNoticia) {
+            foreach ($divNoticia as $divTextos) {
+                $class = $divTextos->getAttribute('class');
+
+                if ($class == 'col s12') {
+                    $Texto = $divTextos->getElementsByTagName('div');
+                    $arrayTextos[] = $Texto;
+                }
+            }
+        }
+        return $arrayTextos;
+    }
+
+    private function capturarTextos($arrayTextos) {
+        
+        $arrayTexto = [];
+        foreach ($arrayTextos as $divNoticia) {
+            foreach ($divNoticia as $txt) {
+                
+                $arrayTexto[] = $txt->nodeValue;
+            }
+        }
+        return $arrayTexto;
+    }
+///////////////////////////////////////////////////////////////////////////
+
+    private function getArrayImagens($divNoticias) {
+        
+        $arrayImagens = [];
+        foreach ($divNoticias as $divNoticia) {
+            foreach ($divNoticia as $imagem) {
+                $class = $imagem->getAttribute('class');
+                if ($class == 'col s12 img-list scale') {
+                    $imagens = $imagem->getAttribute('style');
+                    $imagens = str_replace("background-image:url('", "", $imagens);
+                    $imagens = str_replace("'); margin-bottom: 12px;", "", $imagens);
+                    $arrayImagens[] = $imagens;
+
+                }
+            }
+        }
+        return $arrayImagens;
+    }
+
+    private function capturarImagens($arrayImagens) {
+        
+        $arrayImagem = [];
+        foreach ($arrayImagens as $divNoticia) {
+            foreach ($divNoticia as $imgs) {
+                
+                $arrayImagem[] = $imgs->nodeValue;
+            }
+        }
+        var_dump($arrayImagem);
+        return $arrayImagem;
     }
 }
 ?>
